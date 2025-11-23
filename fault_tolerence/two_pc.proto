@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package twopc;
+
+// The Service Definition
+service TwoPCService {
+    // Q1: Voting Phase
+    rpc RequestVote (VoteRequest) returns (VoteResponse);
+    
+    // Q2: Decision Phase (Prepared for next step)
+    rpc GlobalCommit (DecisionRequest) returns (Ack);
+    rpc GlobalAbort (DecisionRequest) returns (Ack);
+}
+
+// --- Messages ---
+message VoteRequest {
+    string transaction_id = 1;
+    string coordinator_id = 2;
+}
+
+message VoteResponse {
+    bool vote = 1;      // true = Commit, false = Abort
+    string node_id = 2;
+}
+
+message DecisionRequest {
+    string transaction_id = 1;
+}
+
+message Ack {
+    bool success = 1;
+    string message = 2;
+}

@@ -1,0 +1,30 @@
+services:
+  # --- Participants ---
+  node1:
+    build: .
+    command: python -u two_pc_node.py --role participant --id node1
+    ports:
+      - "50051:50051"
+
+  node2:
+    build: .
+    command: python -u two_pc_node.py --role participant --id node2
+    
+  node3:
+    build: .
+    command: python -u two_pc_node.py --role participant --id node3
+    
+  node4:
+    build: .
+    command: python -u two_pc_node.py --role participant --id node4
+
+  # --- Coordinator ---
+  coordinator:
+    build: .
+    # We pass the list of participants to the coordinator
+    command: python -u two_pc_node.py --role coordinator --id Coordinator --participants node1:50051,node2:50051,node3:50051,node4:50051
+    depends_on:
+      - node1
+      - node2
+      - node3
+      - node4

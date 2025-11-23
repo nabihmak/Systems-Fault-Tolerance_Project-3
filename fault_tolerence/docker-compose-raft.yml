@@ -1,0 +1,33 @@
+
+services:
+  node1:
+    build: 
+      context: .
+      dockerfile: Dockerfile.raft
+    command: python -u raft_node.py --id node1 --peers node2:50052,node3:50052,node4:50052,node5:50052
+    ports:
+      - "50052:50052"
+
+  node2:
+    build: 
+      context: .
+      dockerfile: Dockerfile.raft
+    command: python -u raft_node.py --id node2 --peers node1:50052,node3:50052,node4:50052,node5:50052
+
+  node3:
+    build: 
+      context: .
+      dockerfile: Dockerfile.raft
+    command: python -u raft_node.py --id node3 --peers node1:50052,node2:50052,node4:50052,node5:50052
+
+  node4:
+    build: 
+      context: .
+      dockerfile: Dockerfile.raft
+    command: python -u raft_node.py --id node4 --peers node1:50052,node2:50052,node3:50052,node5:50052
+
+  node5:
+    build: 
+      context: .
+      dockerfile: Dockerfile.raft
+    command: python -u raft_node.py --id node5 --peers node1:50052,node2:50052,node3:50052,node4:50052
