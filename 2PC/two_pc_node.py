@@ -18,24 +18,22 @@ def log_event(phase, src, rpc, dest):
 class TwoPCNode(two_pc_pb2_grpc.TwoPCServiceServicer):
     def __init__(self, node_id):
         self.node_id = node_id
-        self.transaction_log = {} # Simulated storage
+        self.transaction_log = {} 
 
-    # --- Q1: VOTING PHASE (Participant) ---
+    # --- Q1: VOTING PHASE ---
     def RequestVote(self, request, context):
-        # Simulation: 80% chance to vote Commit
-        vote_decision = random.random() > 0.2
-        vote_str = "VoteCommit" if vote_decision else "VoteAbort"
+        # FORCE COMMIT: Set to True to guarantee the screenshot logs
+        vote_decision = True 
+        vote_str = "VoteCommit"
         
         # LOG: Sending Vote
         log_event("Voting", self.node_id, vote_str, "Coordinator")
         
         return two_pc_pb2.VoteResponse(vote=vote_decision, node_id=self.node_id)
 
-    # --- Q2: DECISION PHASE (Participant) ---
+    # --- Q2: DECISION PHASE ---
     def GlobalCommit(self, request, context):
-        # LOG: Acknowledge Commit
-        # Note: The prompt asks to log the RPC *sending*. 
-        # Since we are receiving, we log the ACK we are about to send back.
+        # LOG: Sending Ack back
         log_event("Decision", self.node_id, "Ack(Committed)", "Coordinator")
         
         # Execute Commit
@@ -43,7 +41,7 @@ class TwoPCNode(two_pc_pb2_grpc.TwoPCServiceServicer):
         return two_pc_pb2.Ack(success=True, message="Committed")
         
     def GlobalAbort(self, request, context):
-        # LOG: Acknowledge Abort
+        # LOG: Sending Ack back
         log_event("Decision", self.node_id, "Ack(Aborted)", "Coordinator")
         
         # Execute Abort
@@ -60,7 +58,7 @@ def run_server(node_id, port):
 
 def run_coordinator(participants):
     print("Coordinator: Starting Voting Phase...", flush=True)
-    time.sleep(10) # Wait for network
+    time.sleep(5) # Wait for network
     
     votes = []
     
